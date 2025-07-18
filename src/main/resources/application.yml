@@ -1,0 +1,38 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: excel-ninja-sample
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  devtools:
+    restart:
+      enabled: true
+
+logging:
+  level:
+    com.excelninja.sample: DEBUG
+    com.excelninja: DEBUG
+  pattern:
+    console: "[%thread] %-5level %logger{36} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+info:
+  app:
+    name: ExcelNinja Sample
+    description: Spring Boot sample application using ExcelNinja library
+    version: 1.0.0
