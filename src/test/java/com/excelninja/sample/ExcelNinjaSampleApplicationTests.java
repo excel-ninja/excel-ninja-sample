@@ -1,4 +1,4 @@
-package com.excelninja;
+package com.excelninja.sample;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
