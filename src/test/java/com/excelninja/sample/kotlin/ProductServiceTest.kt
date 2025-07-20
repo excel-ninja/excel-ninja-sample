@@ -9,6 +9,8 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.assertThrows
 import org.assertj.core.api.Assertions.*
 import java.io.File
+import java.math.BigDecimal
+import java.time.LocalDateTime
 
 @DisplayName("상품 서비스 테스트")
 class ProductServiceTest {
@@ -52,7 +54,7 @@ class ProductServiceTest {
 
         assertThat(readProducts).hasSize(originalProducts.size)
         assertThat(readProducts[0].name).isEqualTo("MacBook Pro M3")
-        assertThat(readProducts[0].price).isEqualTo(2499.0)
+        assertThat(readProducts[0].price.compareTo(BigDecimal(2499))).isEqualTo(0)
         assertThat(readProducts[0].stockQuantity).isEqualTo(15)
     }
 
@@ -74,8 +76,8 @@ class ProductServiceTest {
         val stats = productService.getProductStatistics(products)
 
         assertThat(stats["totalProducts"]).isEqualTo(5)
-        assertThat(stats["totalValue"] as Double).isGreaterThan(0.0)
-        assertThat(stats["averagePrice"] as Double).isGreaterThan(0.0)
+        assertThat(stats["totalValue"] as BigDecimal).isGreaterThan(BigDecimal.ZERO)
+        assertThat(stats["averagePrice"] as BigDecimal).isGreaterThan(BigDecimal.ZERO)
         assertThat(stats["totalStock"]).isEqualTo(65)
         assertThat(stats["activeProducts"]).isEqualTo(4)
         assertThat(stats["lowStockCount"]).isEqualTo(2)
@@ -97,8 +99,8 @@ class ProductServiceTest {
         val stats = productService.getProductStatistics(emptyProducts)
 
         assertThat(stats["totalProducts"]).isEqualTo(0)
-        assertThat(stats["totalValue"]).isEqualTo(0.0)
-        assertThat(stats["averagePrice"]).isEqualTo(0.0)
+        assertThat(stats["totalValue"] as BigDecimal).isEqualTo(BigDecimal.ZERO)
+        assertThat(stats["averagePrice"] as BigDecimal).isEqualTo(BigDecimal.ZERO)
         assertThat(stats["totalStock"]).isEqualTo(0)
         assertThat(stats["activeProducts"]).isEqualTo(0)
         assertThat(stats["lowStockCount"]).isEqualTo(0)
@@ -110,46 +112,46 @@ class ProductServiceTest {
                 id = 1L,
                 name = "MacBook Pro M3",
                 category = "Laptop",
-                price = 2499.0,
+                price = BigDecimal(2499.0),
                 stockQuantity = 15,
                 isActive = true,
-                createdAt = "2024-01-15T10:30:00"
+                createdAt = LocalDateTime.of(2024, 1, 15, 10, 30, 21)
             ),
             Product(
                 id = 2L,
                 name = "iPhone 15 Pro",
                 category = "Smartphone",
-                price = 1199.0,
+                price = BigDecimal(1199.0),
                 stockQuantity = 5,
                 isActive = true,
-                createdAt = "2024-02-20T14:00:00"
+                createdAt = LocalDateTime.of(2024, 2, 20, 14, 0, 0)
             ),
             Product(
                 id = 3L,
                 name = "AirPods Pro",
                 category = "Audio",
-                price = 249.0,
+                price = BigDecimal(249.0),
                 stockQuantity = 25,
                 isActive = true,
-                createdAt = "2024-03-10T09:45:00"
+                createdAt = LocalDateTime.of(2024, 3, 10, 9, 45, 0)
             ),
             Product(
                 id = 4L,
                 name = "Magic Mouse",
                 category = "Accessory",
-                price = 79.0,
+                price = BigDecimal(79.0),
                 stockQuantity = 8,
                 isActive = false,
-                createdAt = "2024-01-05T16:20:00"
+                createdAt = LocalDateTime.of(2024, 1, 5, 16, 20, 0)
             ),
             Product(
                 id = 5L,
                 name = "iPad Air",
                 category = "Tablet",
-                price = 599.0,
+                price = BigDecimal(599.0),
                 stockQuantity = 12,
                 isActive = true,
-                createdAt = "2024-02-28T11:15:00"
+                createdAt = LocalDateTime.of(2024, 2, 28, 11, 15, 0)
             )
         )
     }

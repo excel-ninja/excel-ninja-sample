@@ -4,6 +4,7 @@ import com.excelNinja.sample.Product
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
 
 @DisplayName("상품 모델 테스트")
 class ProductTest {
@@ -21,9 +22,9 @@ class ProductTest {
     @Test
     @DisplayName("총 가치를 계산할 수 있다")
     fun getTotalValue() {
-        val product = Product(price = 100.0, stockQuantity = 5)
+        val product = Product(price = BigDecimal(100.0), stockQuantity = 5)
 
-        assertThat(product.getTotalValue()).isEqualTo(500.0)
+        assertThat(product.getTotalValue()).isEqualTo(BigDecimal(500))
     }
 
     @Test

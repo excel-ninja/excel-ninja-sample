@@ -6,7 +6,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -54,9 +56,9 @@ public class EmployeeExcelServiceTest {
         List<Employee> readEmployees = employeeExcelService.readEmployeesFromExcel(fileName);
 
         assertThat(readEmployees).hasSize(originalEmployees.size());
-        assertThat(readEmployees.get(0).getName()).isEqualTo("현수");
-        assertThat(readEmployees.get(0).getDepartment()).isEqualTo("Card");
-        assertThat(readEmployees.get(0).getSalary()).isEqualTo(85000);
+        assertThat(readEmployees.getFirst().getName()).isEqualTo("현수");
+        assertThat(readEmployees.getFirst().getDepartment()).isEqualTo("Card");
+        assertThat(readEmployees.getFirst().getSalary().compareTo(new BigDecimal(85000))).isEqualTo(0);
     }
 
     @Test
@@ -98,14 +100,15 @@ public class EmployeeExcelServiceTest {
     }
 
     private List<Employee> createTestEmployees() {
+        LocalDateTime lastUpdated = LocalDateTime.now();
         return Arrays.asList(
-                new Employee(1L, "현수", "Card", 85000, LocalDate.of(2020, 3, 15)),
-                new Employee(2L, "은미", "UI/UX", 72000, LocalDate.of(2019, 7, 20)),
-                new Employee(3L, "창희", "BRM", 80000, LocalDate.of(2021, 1, 10)),
-                new Employee(4L, "완주", "BRM", 92000, LocalDate.of(2018, 11, 5)),
-                new Employee(5L, "대준", "Remittance", 65000, LocalDate.of(2022, 6, 1)),
-                new Employee(6L, "일찬", "Card", 88000, LocalDate.of(2020, 9, 23)),
-                new Employee(7L, "종현", "Card", 70000, LocalDate.of(2023, 2, 14))
+                new Employee(1L, "현수", "Card", new BigDecimal(85000), LocalDate.of(2020, 3, 15), lastUpdated),
+                new Employee(2L, "은미", "UI/UX", new BigDecimal(72000), LocalDate.of(2019, 7, 20), lastUpdated),
+                new Employee(3L, "창희", "BRM", new BigDecimal(80000), LocalDate.of(2021, 1, 10), lastUpdated),
+                new Employee(4L, "완주", "BRM", new BigDecimal(92000), LocalDate.of(2018, 11, 5), lastUpdated),
+                new Employee(5L, "대준", "Remittance", new BigDecimal(65000), LocalDate.of(2022, 6, 1), lastUpdated),
+                new Employee(6L, "일찬", "Card", new BigDecimal(88000), LocalDate.of(2020, 9, 23), lastUpdated),
+                new Employee(7L, "종현", "Card", new BigDecimal(70000), LocalDate.of(2023, 2, 14), lastUpdated)
         );
     }
 
