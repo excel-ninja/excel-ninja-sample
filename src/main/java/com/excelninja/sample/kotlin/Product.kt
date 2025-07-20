@@ -2,6 +2,8 @@ package com.excelNinja.sample
 
 import com.excelninja.domain.annotation.ExcelReadColumn
 import com.excelninja.domain.annotation.ExcelWriteColumn
+import java.math.BigDecimal
+import java.time.LocalDateTime
 
 data class Product(
     @ExcelReadColumn(headerName = "Product ID")
@@ -18,7 +20,7 @@ data class Product(
 
     @ExcelReadColumn(headerName = "Price")
     @ExcelWriteColumn(headerName = "Price", order = 4)
-    var price: Double = 0.0,
+    var price: BigDecimal = BigDecimal.ZERO,
 
     @ExcelReadColumn(headerName = "Stock Quantity")
     @ExcelWriteColumn(headerName = "Stock Quantity", order = 5)
@@ -30,12 +32,20 @@ data class Product(
 
     @ExcelReadColumn(headerName = "Created At")
     @ExcelWriteColumn(headerName = "Created At", order = 7)
-    var createdAt: String = "",
+    var createdAt: LocalDateTime? = null,
 ) {
 
     fun isLowStock(): Boolean = stockQuantity < 10
 
-    fun getTotalValue(): Double = price.toBigDecimal().multiply(stockQuantity.toBigDecimal()).toDouble()
+    fun getTotalValue(): BigDecimal = price.multiply(stockQuantity.toBigDecimal())
 
     fun getDisplayName(): String = "[$category] $name"
+
+    fun getFormattedPrice(): String = "₩${String.format("%,d", price.toLong())}"
+
+    fun getPriceCategory(): String = when {
+        price < BigDecimal(100) -> "Budget"
+        price < BigDecimal(1000) -> "Mid-range"
+        else -> "Premium"
+    }
 }

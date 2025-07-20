@@ -4,6 +4,8 @@ import com.excelninja.application.facade.NinjaExcel
 import com.excelninja.domain.model.ExcelDocument
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 @Service
 class ProductService {
@@ -15,12 +17,16 @@ class ProductService {
             val document = ExcelDocument.writer()
                 .objects(products)
                 .sheetName("Product Inventory")
-                .columnWidth(1, 5000) // Product Name
-                .columnWidth(2, 3000) // Category
+                .columnWidth(1, 5000)
+                .columnWidth(2, 3000)
+                .columnWidth(3, 4000)
+                .columnWidth(6, 5000)
                 .create()
 
             NinjaExcel.write(document, fileName)
+            logger.info("Successfully saved {} products to {}", products.size, fileName)
         } catch (e: Exception) {
+            logger.error("Failed to save products Excel file: {}", e.message)
             throw RuntimeException("Failed to save products Excel file", e)
         }
     }
@@ -28,8 +34,10 @@ class ProductService {
     fun readProductsFromExcel(fileName: String): List<Product> {
         return try {
             val products = NinjaExcel.read(fileName, Product::class.java)
+            logger.info("Successfully read {} products from {}", products.size, fileName)
             products
         } catch (e: Exception) {
+            logger.error("Failed to read products Excel file: {}", e.message)
             throw RuntimeException("Failed to read products Excel file", e)
         }
     }
@@ -38,15 +46,40 @@ class ProductService {
         return products.filter { it.isLowStock() }
     }
 
+    fun getProductsByPriceRange(
+        products: List<Product>,
+        minPrice: BigDecimal,
+        maxPrice: BigDecimal
+    ): List<Product> {
+        return products.filter { it.price >= minPrice && it.price <= maxPrice }
+    }
+
+    fun getPremiumProducts(products: List<Product>): List<Product> {
+        return products.filter { it.getPriceCategory() == "Premium" }
+    }
+
     fun getProductStatistics(products: List<Product>): Map<String, Any> {
-        val totalValue = products.sumOf { it.getTotalValue() }
-        val averagePrice = if (products.isNotEmpty()) {
-            products.sumOf { it.price } / products.size
-        } else {
-            0.0
+        if (products.isEmpty()) {
+            return mapOf(
+                "totalProducts" to 0,
+                "totalValue" to BigDecimal.ZERO,
+                "averagePrice" to BigDecimal.ZERO,
+                "totalStock" to 0,
+                "activeProducts" to 0,
+                "lowStockCount" to 0,
+                "premiumProductCount" to 0
+            )
         }
+
+        val totalValue = products.sumOf { it.getTotalValue() }
+        val averagePrice = products.map { it.price }
+            .fold(BigDecimal.ZERO) { acc, price -> acc.add(price) }
+            .divide(BigDecimal(products.size), 2, RoundingMode.HALF_UP)
+
         val totalStock = products.sumOf { it.stockQuantity }
         val activeProducts = products.count { it.isActive }
+        val lowStockCount = products.count { it.isLowStock() }
+        val premiumProductCount = products.count { it.getPriceCategory() == "Premium" }
 
         return mapOf(
             "totalProducts" to products.size,
@@ -54,7 +87,29 @@ class ProductService {
             "averagePrice" to averagePrice,
             "totalStock" to totalStock,
             "activeProducts" to activeProducts,
-            "lowStockCount" to products.count { it.isLowStock() }
+            "lowStockCount" to lowStockCount,
+            "premiumProductCount" to premiumProductCount
         )
+    }
+
+    fun getCategoryStatistics(products: List<Product>): Map<String, Map<String, Any>> {
+        return products.groupBy { it.category }.mapValues { (_, categoryProducts) ->
+            val totalValue = categoryProducts.sumOf { it.getTotalValue() }
+            val averagePrice = if (categoryProducts.isNotEmpty()) {
+                categoryProducts.map { it.price }
+                    .fold(BigDecimal.ZERO) { acc, price -> acc.add(price) }
+                    .divide(BigDecimal(categoryProducts.size), 2, RoundingMode.HALF_UP)
+            } else {
+                BigDecimal.ZERO
+            }
+
+            mapOf(
+                "count" to categoryProducts.size,
+                "totalValue" to totalValue,
+                "averagePrice" to averagePrice,
+                "totalStock" to categoryProducts.sumOf { it.stockQuantity },
+                "lowStockCount" to categoryProducts.count { it.isLowStock() }
+            )
+        }
     }
 }
