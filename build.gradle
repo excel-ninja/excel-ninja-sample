@@ -28,8 +28,7 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
 
-    // ExcelNinja dependency
-    implementation 'io.github.excel-ninja:excelNinja:0.0.5'
+    implementation 'io.github.excel-ninja:excelNinja:0.0.8'
 
     // Development
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
