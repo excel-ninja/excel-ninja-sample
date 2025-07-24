@@ -1,7 +1,7 @@
 package com.excelninja.sample.java;
 
 import com.excelninja.application.facade.NinjaExcel;
-import com.excelninja.domain.model.ExcelDocument;
+import com.excelninja.domain.model.ExcelWorkbook;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,15 +18,7 @@ public class EmployeeExcelService {
             String fileName
     ) {
         try {
-            ExcelDocument document = ExcelDocument.writer()
-                    .objects(employees)
-                    .sheetName("Employee List")
-                    .columnWidth(1, 4000)
-                    .columnWidth(2, 3000)
-                    .columnWidth(3, 4000)
-                    .columnWidth(5, 5000)
-                    .create();
-
+            ExcelWorkbook document = ExcelWorkbook.builder().sheet("Employee List", employees).build();
             NinjaExcel.write(document, fileName);
         } catch (Exception e) {
             throw new RuntimeException("Failed to save employee Excel file", e);

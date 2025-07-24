@@ -1,7 +1,7 @@
 package com.excelNinja.sample
 
 import com.excelninja.application.facade.NinjaExcel
-import com.excelninja.domain.model.ExcelDocument
+import com.excelninja.domain.model.ExcelWorkbook
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -26,13 +26,7 @@ class StudentService {
                 }
             }
 
-            val document = ExcelDocument.writer()
-                .objects(students)
-                .sheetName("Student Records")
-                .columnWidth(1, 4000) // Name
-                .columnWidth(2, 6000) // Email
-                .create()
-
+            val document = ExcelWorkbook.builder().sheet("Student Records",students).build()
             NinjaExcel.write(document, fileName)
 
             val duration = System.currentTimeMillis() - startTime

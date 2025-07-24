@@ -1,7 +1,7 @@
 package com.excelNinja.sample
 
 import com.excelninja.application.facade.NinjaExcel
-import com.excelninja.domain.model.ExcelDocument
+import com.excelninja.domain.model.ExcelWorkbook
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -14,15 +14,7 @@ class ProductService {
 
     fun saveProductsToExcel(products: List<Product>, fileName: String) {
         try {
-            val document = ExcelDocument.writer()
-                .objects(products)
-                .sheetName("Product Inventory")
-                .columnWidth(1, 5000)
-                .columnWidth(2, 3000)
-                .columnWidth(3, 4000)
-                .columnWidth(6, 5000)
-                .create()
-
+            val document = ExcelWorkbook.builder().sheet("Product Inventory", products).build()
             NinjaExcel.write(document, fileName)
             logger.info("Successfully saved {} products to {}", products.size, fileName)
         } catch (e: Exception) {

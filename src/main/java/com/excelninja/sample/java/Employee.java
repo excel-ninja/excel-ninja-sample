@@ -74,6 +74,7 @@ public class Employee {
         return String.format("$%,d", salary.longValue());
     }
 
+    // Getters and Setters
     public Long getId() {return id;}
     public void setId(Long id) {this.id = id;}
 
@@ -84,14 +85,12 @@ public class Employee {
     public void setDepartment(String department) {this.department = department;}
 
     public BigDecimal getSalary() {return salary;}
-
     public void setSalary(BigDecimal salary) {this.salary = salary;}
 
     public LocalDate getHireDate() {return hireDate;}
     public void setHireDate(LocalDate hireDate) {this.hireDate = hireDate;}
 
     public LocalDateTime getLastUpdated() {return lastUpdated;}
-
     public void setLastUpdated(LocalDateTime lastUpdated) {this.lastUpdated = lastUpdated;}
 
     @Override
